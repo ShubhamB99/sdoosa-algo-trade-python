@@ -3,6 +3,7 @@ import logging
 from config.Config import getBrokerAppConfig
 from models.BrokerAppDetails import BrokerAppDetails
 from loginmgmt.ZerodhaLogin import ZerodhaLogin
+from loginmgmt.FyersLogin import FyersLogin
 
 class Controller:
   brokerLogin = None # static variable
@@ -15,14 +16,15 @@ class Controller:
     brokerAppDetails.setClientID(brokerAppConfig['clientID'])
     brokerAppDetails.setAppKey(brokerAppConfig['appKey'])
     brokerAppDetails.setAppSecret(brokerAppConfig['appSecret'])
+    brokerAppDetails.setRedirectURL(brokerAppConfig['redirectUrl'])
 
     logging.info('handleBrokerLogin appKey %s', brokerAppDetails.appKey)
     Controller.brokerName = brokerAppDetails.broker
     if Controller.brokerName == 'zerodha':
       Controller.brokerLogin = ZerodhaLogin(brokerAppDetails)
     # Other brokers - not implemented
-    #elif Controller.brokerName == 'fyers':
-      #Controller.brokerLogin = FyersLogin(brokerAppDetails)
+    elif Controller.brokerName == 'fyers':
+      Controller.brokerLogin = FyersLogin(brokerAppDetails)
 
     redirectUrl = Controller.brokerLogin.login(args)
     return redirectUrl
